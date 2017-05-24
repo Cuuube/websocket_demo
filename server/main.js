@@ -1,16 +1,3 @@
-// const http = require('http');
-// const path = require('path');
-// const {
-//     port,
-// } = require('./config');
-
-// const server = http.createServer((req, res) => {
-//     res.writeHead(200,{'Content-Type': 'text/plain'});
-//     res.write('Hello');
-//     res.end();
-// }).listen(port);
-// console.log('server running at: http://0.0.0.0:'+ port);
-
 const WebSocketServer = require('websocket').server;
 const http = require('http');
 
@@ -22,33 +9,36 @@ class ChatMessage {
     }
 }
 
-let events = require('events');
-let ev = new events.EventEmitter();//实例化事件
-let connections = [];
-ev.on('addConnections', (connection) => {
-    connections.push(connection);
-    console.log('房间中共有：'+connections.length+'人');
-})
-ev.on('closeConnections', (connection) => {
-    connections = connections.filter((val) => val != connection);
-    console.log('房间还剩下：'+connections.length+'人');
-})
-ev.on('sendData',(data) => {
-    let _chatData = JSON.stringify(chatData);
-    data.forEach((val) => {
-        val.sendUTF(_chatData);
-    })
-    //console.log('消息已传给：'+data.length+'人');
-})
+const events = require('events');
+const ev = new events.EventEmitter();//实例化事件
+//let connections = [];
+// 使用wsServer.connetions代替自己创建connections数组
+// ev.on('addConnections', (connection) => {
+//     connections.push(connection);  
+// })
+// ev.on('closeConnections', (connection) => {
+//     connections = connections.filter((val) => val != connection);
+// })
+// ev.on('sendData',(data) => {
+//     const _chatData = JSON.stringify(chatData);
+//     data.forEach((val) => {
+//         val.sendUTF(_chatData);
+//     })
+//     //console.log('消息已传给：'+data.length+'人');
+// })
 ev.on('resived', (data) => {
     chatData.data.push(new ChatMessage(data.name, data.message));
-    ev.emit('sendData', connections);
+    //ev.emit('sendData');
+    const _chatData = JSON.stringify(chatData);
+    boardcast(_chatData);
 })
+
 const server = http.createServer((req, res) => {
     console.log(`${new Date()} Receved request for ${req.url}`);
     res.writeHead(404);
     res.end();
 });
+
 server.listen(require('./config.js').port, () => {
     console.log((new Date()) + ' Server is listening on port 3456');
 });
@@ -61,7 +51,8 @@ wsServer = new WebSocketServer({
 wsServer.on('request', (req) => {
     const connection = req.accept('echo-protocol', req.origin);
     console.log(`"${req.origin}" 连接成功`);
-    ev.emit('addConnections', connection);
+    //ev.emit('addConnections', connection);
+    console.log('房间中共有：'+ wsServer.connections.length +'人');
     connection.on('message', (message) => {
         if (message.type === 'utf8') {
             let resivedData = JSON.parse(message.utf8Data);
@@ -77,12 +68,19 @@ wsServer.on('request', (req) => {
     });
 
     connection.on('close', function(reasonCode, description) {
-        ev.emit('closeConnections', connection);
+        //ev.emit('closeConnections', connection);
         console.log(connection.remoteAddress + ' disconnected.');
+        console.log('房间还剩下：'+ wsServer.connections.length +'人');
         
     });
 })
 
 const timesTwo = function (number, connection) {
     connection.sendUTF(number * 2);
+}
+
+const boardcast = function (message) {
+    wsServer.connections.forEach((connection) => {
+        connection.sendUTF(message);
+    })
 }
