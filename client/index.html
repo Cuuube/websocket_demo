@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>websocketDemo</title>
+</head>
+<body>
+    <div id="print"></div>
+    <input type="text" name="text">
+    <button>send</button>
+    <button>close</button>
+    <script>
+        const print = function print(str,id = 'print') {
+            const oldStr = document.getElementById(id).innerHTML;
+            document.getElementById(id).innerHTML = oldStr + '<br/>' + str;
+        }
+        //print('websocket');
+        let name = Math.floor(10*Math.random());
+        document.getElementsByTagName('button')[0].onclick = () => {
+            const value = document.getElementsByTagName('input')[0].value;
+            let data = {
+                name,
+                message: value,
+            }
+            sendMessage(data);
+        }
+        document.getElementsByTagName('button')[1].onclick = () => {
+            closeConnection();
+        }
+    </script>
+    <script>
+        const ws = new WebSocket('ws://0.0.0.0:3456', 'echo-protocol');
+        ws.onopen = function (e) {
+            console.log('opened!');
+        }
+        ws.onmessage = function (e) {
+            let _data = JSON.parse(e.data);
+            console.log('message: ' + e.data);
+            document.getElementById('print').innerHTML = '';
+            renderData(_data);
+            //sendMessage(e.data * 2);
+        }
+        ws.onclose = function (e) {
+            console.log('closed!')
+        }
+        const sendMessage = function (data) {
+            let _data = JSON.stringify(data);
+            ws.send(_data);
+        }
+        const closeConnection = () => ws.close();
+        const renderData = (data) => {
+            //todo
+            console.log(data);
+            data.data.forEach((val) => {
+                print(val.name + ': ' + val.message);
+            })
+            
+        }
+    </script>
+</body>
+</html>
