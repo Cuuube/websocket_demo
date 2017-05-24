@@ -11,6 +11,7 @@
     <input type="text" name="text">
     <button>send</button>
     <button>close</button>
+    <button>reconnect</button>
     <script>
         const print = function print(str,id = 'print') {
             const oldStr = document.getElementById(id).innerHTML;
@@ -29,9 +30,16 @@
         document.getElementsByTagName('button')[1].onclick = () => {
             closeConnection();
         }
+        document.getElementsByTagName('button')[2].onclick = () => {
+            //ws = new WebSocket('ws://0.0.0.0:3456', 'echo-protocol');
+            alert('暂无');
+        }
     </script>
     <script>
-        const ws = new WebSocket('ws://0.0.0.0:3456', 'echo-protocol');
+        const reConne = () => {
+            
+        }
+        let ws = new WebSocket('ws://0.0.0.0:3456', 'echo-protocol');
         ws.onopen = function (e) {
             console.log('opened!');
         }
