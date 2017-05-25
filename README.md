@@ -1,6 +1,7 @@
 # websocket_demo
 a websocket_demo
 ```bash
+$ npm install
 $ cd server
 $ node main.js
 ```
