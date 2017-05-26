@@ -46,7 +46,6 @@
         ws.onmessage = function (e) {
             let _data = JSON.parse(e.data);
             console.log('message: ' + e.data);
-            document.getElementById('print').innerHTML = '';
             renderData(_data);
             //sendMessage(e.data * 2);
         }
@@ -61,9 +60,10 @@
         const renderData = (data) => {
             //todo
             console.log(data);
-            data.data.forEach((val) => {
-                print(val.name + ': ' + val.message);
-            })
+            //data.data.forEach((val) => {
+             //   print(val.name + ': ' + val.message);
+            //})
+            print(data.name + ': ' + data.message)
             
         }
     </script>

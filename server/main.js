@@ -7,8 +7,11 @@ class Main {
             }
         }
         class Boardcaster {
+            constructor(ws_server) {
+                this.server = ws_server;
+            }
             send(message) {
-                wsServer.connections.forEach((connection) => {
+                this.server.connections.forEach((connection) => {
                     connection.sendUTF(message);
                 });
             }
@@ -20,12 +23,13 @@ class Main {
 
         const ev = new events.EventEmitter();
         const chatData = {data:[]};
-        const boardcaster = new Boardcaster();
+        
 
         ev.on('resived', (data) => {
-            chatData.data.push(new ChatMessage(data.name, data.message));
-            const _chatData = JSON.stringify(chatData);
-            boardcaster.send(_chatData);
+            //chatData.data.push(new ChatMessage(data.name, data.message));
+            //const _chatData = JSON.stringify(chatData);
+            //boardcaster.send(_chatData);
+            boardcaster.send(data);
         })
 
         const server = http.createServer((req, res) => {
@@ -41,6 +45,7 @@ class Main {
             httpServer: server,
             autoAcceptConnetions: false,
         });
+        const boardcaster = new Boardcaster(wsServer);
 
         wsServer.on('request', (req) => {
             const connection = req.accept('echo-protocol', req.origin);
@@ -51,7 +56,8 @@ class Main {
                 if (message.type === 'utf8') {
                     let resivedData = JSON.parse(message.utf8Data);
                     console.log(`Received Message from ${req.origin}: "${message.utf8Data}"`);
-                    ev.emit('resived', resivedData);
+                    // ev.emit('resived', resivedData);
+                    ev.emit('resived', message.utf8Data);
                 }
             });
 
