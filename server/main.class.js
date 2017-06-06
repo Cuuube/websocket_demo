@@ -6,10 +6,22 @@ class Main {
                 this.message = message;
             }
         }
+        class Boardcaster {
+            constructor(ws_server) {
+                this.server = ws_server;
+            }
+            send(message) {
+                this.server.connections.forEach((connection) => {
+                    connection.sendUTF(message);
+                });
+            }
+        }
 
         const WebSocketServer = require('websocket').server;
         const http = require('http');
+        const events = require('events');
 
+        const ev = new events.EventEmitter();
         const chatData = {data:[]};
         
 
@@ -35,11 +47,6 @@ class Main {
         });
         const boardcaster = new Boardcaster(wsServer);
 
-        wsServer.on('boardcast', function(message) {
-            this.connections.forEach((connection) => {
-                connection.sendUTF(message);
-            });
-        })
         wsServer.on('request', (req) => {
             const connection = req.accept('echo-protocol', req.origin);
             console.log(`"${req.origin}" 连接成功`);
@@ -49,7 +56,8 @@ class Main {
                 if (message.type === 'utf8') {
                     let resivedData = JSON.parse(message.utf8Data);
                     console.log(`Received Message from ${req.origin}: "${message.utf8Data}"`);
-                    wsServer.emit('boardcast', message.utf8Data);
+                    // ev.emit('resived', resivedData);
+                    ev.emit('resived', message.utf8Data);
                 }
             });
 
