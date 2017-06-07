@@ -11,14 +11,6 @@ class Main {
         const http = require('http');
 
         const chatData = {data:[]};
-        
-
-        ev.on('resived', (data) => {
-            //chatData.data.push(new ChatMessage(data.name, data.message));
-            //const _chatData = JSON.stringify(chatData);
-            //boardcaster.send(_chatData);
-            boardcaster.send(data);
-        })
 
         const server = http.createServer((req, res) => {
             console.log(`${new Date()} Receved request for ${req.url}`);
@@ -33,7 +25,6 @@ class Main {
             httpServer: server,
             autoAcceptConnetions: false,
         });
-        const boardcaster = new Boardcaster(wsServer);
 
         wsServer.on('boardcast', function(message) {
             this.connections.forEach((connection) => {

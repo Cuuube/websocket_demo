@@ -5,67 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>websocketDemo</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
-    <div id="print"></div>
-    <input type="text" name="text">
-    <button>send</button>
-    <button>close</button>
-    <button>reconnect</button>
-    <script>
-        const print = function print(str,id = 'print') {
-            const oldStr = document.getElementById(id).innerHTML;
-            document.getElementById(id).innerHTML = oldStr + '<br/>' + str;
-        }
-        //print('websocket');
-        let name = Math.floor(10*Math.random());
-        document.getElementsByTagName('button')[0].onclick = () => {
-            const value = document.getElementsByTagName('input')[0].value;
-            let data = {
-                name,
-                message: value,
-            }
-            sendMessage(data);
-        }
-        document.getElementsByTagName('button')[1].onclick = () => {
-            closeConnection();
-        }
-        document.getElementsByTagName('button')[2].onclick = () => {
-            //ws = new WebSocket('ws://0.0.0.0:3456', 'echo-protocol');
-            alert('暂无');
-        }
-    </script>
-    <script>
-        const reConne = () => {
-            
-        }
-        let ws = new WebSocket('ws://0.0.0.0:3456', 'echo-protocol');
-        ws.onopen = function (e) {
-            console.log('opened!');
-        }
-        ws.onmessage = function (e) {
-            let _data = JSON.parse(e.data);
-            console.log('message: ' + e.data);
-            renderData(_data);
-            //sendMessage(e.data * 2);
-        }
-        ws.onclose = function (e) {
-            console.log('closed!')
-        }
-        const sendMessage = function (data) {
-            let _data = JSON.stringify(data);
-            ws.send(_data);
-        }
-        const closeConnection = () => ws.close();
-        const renderData = (data) => {
-            //todo
-            console.log(data);
-            //data.data.forEach((val) => {
-             //   print(val.name + ': ' + val.message);
-            //})
-            print(data.name + ': ' + data.message)
-            
-        }
-    </script>
+    <header>
+        
+    </header>
+    <main>
+        <section class="left">
+            <div id="print">q</div>
+        </section>
+        <section class="right">
+            <div>
+                <input type="text" name="text">
+                <button>send</button>
+                <button>close</button>
+                <button>reconnect</button>
+            </div>
+        </section>
+    </main>
+    
+    
+    
+    <footer>
+        
+    </footer>
+    <script src="./js/index.js" type="text/javascript"></script>
 </body>
 </html>
